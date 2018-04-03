@@ -157,6 +157,9 @@ val performanceTest by run {
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
+    // TODO: probably not needed? (see performanceTest below)
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
+    maxHeapSize = "3g"
 }
 
 
