@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
+    // TODO: libraries added temporarily (?)
+    private val forbiddenDirectories = listOf("testdata", "resources", "libraries")
 
-
-    val projectRootFile = File(".")
+    private val projectRootFile = File(".")
 
 
     override fun setUpModule() {
@@ -39,7 +40,7 @@ class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
 
         ModuleRootModificationUtil.updateModel(module) {
             projectRootFile.walkTopDown().onEnter {
-                it.name.toLowerCase() !in setOf("testdata", "resources")
+                it.name.toLowerCase() !in forbiddenDirectories
             }.filter {
                 it.isDirectory && (it.name in setOf("src", "test", "tests"))
             }.forEach { dir ->
@@ -50,7 +51,7 @@ class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
 
     }
 
-    fun createSession() = object : FirSessionBase() {
+    private fun createSession() = object : FirSessionBase() {
         init {
             val firProvider = FirProviderImpl(this)
             registerComponent(FirProvider::class, firProvider)
